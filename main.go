@@ -35,6 +35,7 @@ func main() {
 			Password string `json:"password"`
 		}
 		var user User
+
 		c.BindJSON(&user)
 
 		if len(user.Login) == 0 {
@@ -43,7 +44,6 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"resp": "empty password"})
 		} else {
 			resp := mongo.SetInfo(user.Login, user.Password)
-
 			c.JSON(http.StatusOK, gin.H{"resp": resp})
 		}
 	})

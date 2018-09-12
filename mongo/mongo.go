@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const CONN = "localhost:27017"
+const CONN = "mongodb://mongo:27017"
 
 func SetInfo(login, pass string) bool {
 	session, err := mgo.Dial(CONN)
@@ -17,16 +17,18 @@ func SetInfo(login, pass string) bool {
 		log.Println(err)
 	}
 	c := session.DB("users").C("info")
-	user := struct {
-		Login    string `json:"login"`
-		Password string `json:"password"`
-	}{login, pass}
+
+	type User struct {
+		Login string
+	}
+	var user User
+
+	c.Find(bson.M{"login": login}).One(&user)
 
 	if len(user.Login) != 0 {
 		return false
 	}
 
-	c.Find(bson.M{"login": login}).One(&user)
 	err = c.Insert(bson.M{"login": login, "pass": hashAndSalt([]byte(pass))})
 	if err != nil {
 		log.Println(err)
