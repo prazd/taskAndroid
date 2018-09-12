@@ -1,0 +1,15 @@
+version: "2"
+services:
+  app:
+    container_name: goa
+    build: .
+    command: ./main
+    ports:
+      - "8080:8080"
+  mongo:
+    container_name: mongodb
+    image: mongo
+    volumes:
+      - ./mongo:/mongo/db
+    ports:
+      - "27017:27017"
